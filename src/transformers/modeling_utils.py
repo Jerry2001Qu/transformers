@@ -1535,6 +1535,10 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin):
             assert (len(hypo) == max_length for hypo in best)
             decoded = torch.stack(best).type(torch.long).to(next(self.parameters()).device)
 
+        # normalize scores
+        best_scores = -1 / torch.tensor(best_scores)
+        best_scores = [float(i)/sum(best_scores) for i in best_scores]
+
         return decoded, best_scores
 
     @staticmethod
